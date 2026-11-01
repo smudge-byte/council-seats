@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fort William First Nation – How many council seats?</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 16px 40px;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff; color: #1a1a1a; line-height: 1.4;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 1.45rem; margin: 0 0 4px; }
+  p.lead { margin: 0 0 6px; color: #444; font-size: 0.95rem; font-weight: 600; }
+  p.byline { margin: 0 0 8px; color: #555; font-size: 0.9rem; max-width: 760px; }
+  p.survey { margin: 0 0 20px; font-size: 0.9rem; color: #333; }
+  p.survey a, p.byline a { color: #0b5d3b; font-weight: 600; }
+
+  .control {
+    background: #f4f6f8; border: 1px solid #dde2e7; border-radius: 10px;
+    padding: 18px 20px 14px; margin-bottom: 24px;
+  }
+  .control label { display: block; font-weight: 600; margin-bottom: 8px; }
+  .big { font-size: 2.2rem; font-weight: 700; color: #0b5d3b; line-height: 1; }
+  input[type=range] { width: 100%; margin: 12px 0 4px; accent-color: #0b5d3b; cursor: pointer; }
+  .ticks { display: flex; justify-content: space-between; font-size: 0.85rem; color: #555; padding: 0 4px; }
+  .ticks span { width: 1.5em; text-align: center; }
+  .caveat { font-size: 0.85rem; color: #555; margin: 12px 0 0; }
+
+  .years { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 860px) { .years { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .years { grid-template-columns: 1fr; } }
+
+  .year { border: 1px solid #dde2e7; border-radius: 10px; overflow: hidden; }
+  .year h2 {
+    margin: 0; padding: 10px 12px; font-size: 1.05rem;
+    background: #0b5d3b; color: #fff; display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .year h2 small { font-weight: 400; font-size: 0.78rem; opacity: 0.9; }
+  ol { list-style: none; margin: 0; padding: 6px 0; }
+  li {
+    display: grid; grid-template-columns: 1.6em 1fr auto; gap: 6px; align-items: baseline;
+    padding: 5px 12px; font-size: 0.92rem; transition: opacity .25s, background .25s;
+  }
+  li .rank { color: #888; font-size: 0.8rem; text-align: right; }
+  li .votes { font-variant-numeric: tabular-nums; color: #333; }
+  li.out { opacity: 0.32; background: #fafafa; }
+  li.out .name { text-decoration: line-through; text-decoration-color: #999; }
+  li.cut { border-top: 2px dashed #c0392b; }
+  li.vacant { opacity: 0.45; font-style: italic; }
+  .ynote { margin: 0; padding: 8px 12px; font-size: 0.78rem; color: #555; background: #fff8e6; border-top: 1px solid #f0e2b8; }
+
+  .legend { font-size: 0.85rem; color: #555; margin-top: 16px; }
+  .legend .sw { display: inline-block; width: 12px; height: 12px; vertical-align: -1px; margin-right: 4px; border-radius: 2px; }
+  .notes { font-size: 0.8rem; color: #666; margin-top: 18px; border-top: 1px solid #e5e5e5; padding-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>How many council seats?</h1>
+  <p class="lead">Drag the slider.</p>
+  <p class="byline"><a href="https://fwfn.com" target="_blank" rel="noopener">Fort William First Nation</a> is considering changing the size of its Band Council for the 2027 General Election. This tool has been developed to show how a different Council size would have looked in previous elections. Names below the line would not have held a seat if council had been that size.</p>
+  <p class="survey">You can complete the official survey <a href="https://forms.cloud.microsoft/pages/responsepage.aspx?id=KC9CVB2fbEKe1zlujNPPRyj66BKflUVCjWxgaFMckitUNTZWRkNENVlHWlBWSlNYTlNIOEQ0TUlEMi4u&amp;route=shorturl" target="_blank" rel="noopener">here</a>.</p>
+
+  <div class="control">
+    <label for="seats">Number of council seats: <span class="big" id="seatsOut">12</span></label>
+    <input type="range" id="seats" min="7" max="12" step="1" value="12" aria-label="Number of council seats">
+    <div class="ticks"><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
+    <p class="caveat">This shows who <em>finished</em> in the top spots in each past election. It is not a prediction: with fewer seats, each voter would mark fewer names and the vote totals would change.</p>
+  </div>
+
+  <div class="years" id="years"></div>
+
+  <p class="legend"><span class="sw" style="background:#0b5d3b"></span>Would still hold a seat &nbsp; <span class="sw" style="background:#ddd"></span>Would not hold a seat</p>
+  <p class="notes" id="notes"></p>
+</div>
+
+<script>
+const DATA = [
+  { year: 2013, date: "April 7, 2013",
+    note: "Georjann Morriseau (301 councillor votes) was also elected Chief and declined the council seat for the full term. Council served with 11 members.",
+    results: [
+    ["Cathy (Catherine) Rodger", 241], ["Valerie Chapman", 234],
+    ["Sherry Lynn Pelletier", 234], ["Leo Bannon Jr.", 233], ["Leo L. (Jiggs) Bannon", 217],
+    ["Wyatt (Chippers) Bannon", 199], ["Jennelle Charlie", 190], ["Philip Benedict (Benny) Solomon", 177],
+    ["Dwight Boucher", 161], ["Trevor Wells", 159], ["Yvette Anne Greenwald", 158]
+  ]},
+  { year: 2015, date: "April 11, 2015", results: [
+    ["Jennelle Charlie", 317], ["Sherry Lynn Pelletier", 310], ["Georjann Morriseau", 290],
+    ["Leo Bannon", 258], ["Leo (Jiggs) Bannon", 257], ["Michael J. Pelletier Sr.", 255],
+    ["Phil Pelletier", 248], ["Dwight Boucher", 217], ["Kyle MacLaurin", 216],
+    ["Anthony Collins Sr.", 215], ["Valerie Chapman", 207], ["Michele (Piette) Solomon", 196]
+  ]},
+  { year: 2017, date: "April 8, 2017", results: [
+    ["Sherry Lynn Pelletier", 398], ["Jennelle Charlie", 385], ["Kyle MacLaurin", 358],
+    ["Phillip Pelletier", 313], ["Michele (Piette) Solomon", 310], ["Anthony (Tony) Collins Sr.", 296],
+    ["Cathy McKenzie (Pelletier)", 269], ["Leo Bannon Jr.", 258], ["Leo (Jiggs) Bannon", 237],
+    ["Valerie Chapman", 236], ["Murray Pelletier", 231], ["Yvette Anne Greenwald", 225]
+  ]},
+  { year: 2023, date: "May 2023", results: [
+    ["Jennelle Charlie", 305], ["Leo Bannon", 279], ["Sheldon Bannon", 266],
+    ["Bess Legarde", 211], ["Sherry Lynn Pelletier", 203], ["Desiree Morisseau-Shields", 188],
+    ["Peter Collins", 179], ["Jacob McKay", 160], ["Yvette A. Greenwald", 156],
+    ["Kyle MacLaurin", 150], ["Bonnie A. Pelletier", 142], ["Brian Ludwigsen", 139]
+  ]}
+];
+
+const yearsEl = document.getElementById("years");
+DATA.forEach(y => {
+  const box = document.createElement("div");
+  box.className = "year";
+  const rows = y.results.map(([n, v], i) =>
+    `<li data-rank="${i+1}"><span class="rank">${i+1}</span><span class="name">${n}</span><span class="votes">${v}</span></li>`);
+  for (let i = y.results.length; i < 12; i++) {
+    rows.push(`<li class="vacant"><span class="rank">${i+1}</span><span class="name">Seat left vacant</span><span class="votes">—</span></li>`);
+  }
+  box.innerHTML = `<h2><span>${y.year}</span><small>${y.date}</small></h2>` +
+    `<ol>${rows.join("")}</ol>` +
+    (y.note ? `<p class="ynote">${y.note}</p>` : "");
+  yearsEl.appendChild(box);
+});
+
+const slider = document.getElementById("seats");
+const out = document.getElementById("seatsOut");
+function update() {
+  const n = +slider.value;
+  out.textContent = n;
+  document.querySelectorAll("li[data-rank]").forEach(li => {
+    const r = +li.dataset.rank;
+    li.classList.toggle("out", r > n);
+    li.classList.toggle("cut", r === n + 1);
+  });
+}
+slider.addEventListener("input", update);
+update();
+
+document.getElementById("notes").innerHTML =
+  "Sources: Fort William First Nation Statements of the Votes (2013, 2015, 2017) and the published 2023 council results. " +
+  "Vote counts are for the councillor ballot only. The 2013 column lists the eleven councillors who served the 2013–2015 term " +
+  "(Chief Morriseau's memo to membership, May 15, 2013; BDO schedule of remuneration, year ended March 31, 2015).";
+</script>
+</body>
+</html>
